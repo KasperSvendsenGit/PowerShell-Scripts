@@ -1,0 +1,70 @@
+Log på DC server, åben Active Directory Administrative Center.
+Gå under domænet > under Deleted Objects.
+Find brugeren det skal restores > Højreklik brugeren > Restore (til det OU den var i før).
+eller
+Vælg Restore To... (et andet OU end det den var i før).
+Gå på serveren med AD Sync.
+Åben Synchronization Service Manager.
+Kør "Full Synchronization" for alle domæner.
+Kør "Export" for alle domæner.
+Kør "Full Import" for alle domæner
+Hvis fejl opstår under sync, skal de løses. Det kan oftes gøres ved at åbne det fejlede object, da det fremgår hvilken attribute der fejler.
+Check at brugeren er synlig i Office 365 admin center, hvis ikke vent lidt, eller kør punkt 7, 8, 9 igen indtil der ikke er fejl, og den er synlig.
+Tilføj Exchange licens til brugeren, og vent til det kan ses i Exchange Online Admin center. Brugeren burde nu have en ny, tom mailboks.
+Resten af proceduren foregår i PowerShell!
+
+Script til nedenstående findes her: Link (Anbefales) 
+
+Log på Exchange Online med PowerShell med admin rettigheder:
+$UserCredential = Get-Credential 
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+Import-PSSession $Session -DisableNameChecking
+Test forbindelsen med: Get-Mailbox
+Kør Get-Mailbox -SoftDeletedMailbox * tjekker om der er soft deleted mailbokse tilgængelige, vil ikke kunne ses 30 dage efter den er slettet.
+Hvis mailboksen der skal restores kan ses, kør Get-Mailbox {Username} -SoftDeletedMailbox |fl Name,DistinguishedName,ExchangeGuid,PrimarySmtpAddress vi skal bruge "ExchangeGuid", dette er vores source.
+Kør Get-MailboxLocation -Identity {Username} | Select-Object -ExpandProperty Identity vi skal bruge Identity til destinationen.
+Kør $InactiveMailbox = Get-Mailbox -SoftDeletedMailbox -Identity {Username}
+18. test at det virker, kør $InactiveMailbox
+19. Kør New-MailboxRestoreRequest -SourceMailbox $InactiveMailbox.DistinguishedName -TargetMailbox {Output fra punkt 5.} -TargetRootFolder "{Mappe mails lægges i f.eks. "Restored"}" -AllowLegacyDNMismatch
+
+
+Brug Get-MailboxRestoreRequest og Get-MailboxRestoreRequest | fl, til at se status.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Guide baseret på nedenstående dokumentation:
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/new-mailboxrestorerequest?view=exchange-ps
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/remove-mailboxrestorerequest?view=exchange-ps
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/get-mailboxlocation?view=exchange-ps
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/get-mailbox?view=exchange-ps
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/get-mailboxrestorerequeststatistics?view=exchange-ps
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/get-mailboxfolder?view=exchange-ps
+
+https://docs.microsoft.com/en-us/office365/securitycompliance/restore-an-inactive-mailbox
+
+https://docs.microsoft.com/en-us/exchange/recipients-in-exchange-online/manage-user-mailboxes/use-powershell-to-display-mailbox-information
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/get-mailboxfolderstatistics?view=exchange-ps
+
+https://www.groupware-migration.com/en/knowledge-base/connect-to-office-365-with-powershell.html
+
+https://o365info.com/restore-exchange-online-user-mailbox-cloud-fully-hosted-environment-article-3-3-part-10-23/
+
+https://blogs.technet.microsoft.com/jbecks/2018/03/11/o365-exo-restore-and-recover-soft-deleted-mailboxes/
+
