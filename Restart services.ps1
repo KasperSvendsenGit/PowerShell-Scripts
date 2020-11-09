@@ -1,13 +1,13 @@
-﻿# Variables
+﻿# Script start.
+Write-Host "Script starter..."
+timeout /T 3
+
+# Variables
 $rng = Get-Random -Maximum 10000000
 $dmdc_agent = Get-Service -Name "dmdc_agent" | Select-Object Name,DisplayName,Status
 $DMDC_SM = Get-Service -Name "DMDC_SM" | Select-Object Name,DisplayName,Status
 $DMDCCOMMUNICATE = Get-Service -Name "DMDCCOMMUNICATE" | Select-Object Name,DisplayName,Status
 $DMDCDATABASE = Get-Service -Name "DMDCDATABASE" | Select-Object Name,DisplayName,Status
-
-# Script start.
-Write-Host "Script starter..."
-timeout /T 3 > $env:temp\temp$rng.txt
 
 # Stop services.
 Write-Host "Stopper DMDC services..."
@@ -15,6 +15,8 @@ Stop-Service -Name "dmdc_agent"
 Stop-Service -Name "DMDC_SM"
 Stop-Service -Name "DMDCCOMMUNICATE"
 Stop-Service -Name "DMDCDATABASE"
+
+timeout /T 3 > $env:temp\temp$rng.txt
 
 # Test if services are running and start them if they're not.
 if($dmdc_agent.Status -eq "Stopped")
@@ -42,17 +44,3 @@ if($DMDCDATABASE.Status -eq "Running") {Write-Host $DMDCCOMMUNICATE.DisplayName"
 # Script end.
 Write-Host "Scriptet er færdig med at køre, du kan lukke vinduet nu..."
 pause
-
-
-
-
-
-
-
-
-
-
-
-
-
-
