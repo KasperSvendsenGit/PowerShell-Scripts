@@ -1,6 +1,6 @@
 ﻿$CustomerName = "Customer" # Has to match Deskpro Organization name
 $SearchBase = "OU=users,DC=example,DC=local" # Insert the SearchBase path to limit results
-$Language = "en-US"
+$Language = "en-US" # Must use locale - https://support.deskpro.com/en-US/guides/admin-guide/data/data-transfer/importing-data-1/importing-user-organization-and-ticket-csv-data/supported-languages-locale-codes
 
 $CustomerFileName = $CustomerName.Replace(" ","")
 $Date = Get-Date -Format "yyyy-mm-dd_HH-mm"
