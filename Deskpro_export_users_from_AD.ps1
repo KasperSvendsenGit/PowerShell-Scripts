@@ -1,6 +1,6 @@
 ﻿$CustomerName = "Customer" # Has to match Deskpro Organization name
 $SearchBase = "OU=users,DC=example,DC=local" # Insert the SearchBase path to limit results
-
+$Language = "en-US"
 
 $CustomerFileName = $CustomerName.Replace(" ","")
 $Date = Get-Date -Format "yyyy-mm-dd_HH-mm"
@@ -16,7 +16,7 @@ Select @{Name = 'Name'; Expression = {$_.displayname}}, `
 @{Name = 'Phone2'; Expression = {$_.telephoneNumber.replace(" ","")}}, 
 @{Name = 'Organization Position'; Expression = {$_.Title.replace(',','')}}, `
 @{Name = 'Organization'; Expression = {$CustomerName}}, `
-@{Name = 'Language'; Expression = {"en-US"}} |
+@{Name = 'Language'; Expression = {$Language}} |
 Export-Csv -Path $OutFileTemp -Delimiter "," -NoTypeInformation -Force -Encoding UTF8
 
 # Remove " from file
