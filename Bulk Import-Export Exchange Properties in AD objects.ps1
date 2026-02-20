@@ -3,7 +3,7 @@
 
 
 #	Variables
-$SearchBase = "OU=Test Users,OU=Users,OU=_svendsen.local,DC=svendsen,DC=local"
+$SearchBase = ""
 $UserDataExportPath = "C:\temp\ADobjectExchangeData.csv"
 
 
